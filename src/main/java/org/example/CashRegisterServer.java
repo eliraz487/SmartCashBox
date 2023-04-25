@@ -27,18 +27,12 @@ public class CashRegisterServer {
         this.running = true;
         while (running) {
             Socket socket = serverSocket.accept();
+            System.out.println("client connected");
             countthread++;
             DataOutputStream writer = new DataOutputStream(socket.getOutputStream());
             DataInputStream reader = new DataInputStream(socket.getInputStream());
-
-            String response;
-            while ((response=reader.readUTF())==null){
-                response=reader.readUTF();
-            }
-            double purchase=Double.valueOf(response);
-            writer.writeUTF("ok start to pay");
-            System.out.println("client sing in");
-            executorService.submit(new ClientHandler(socket,String.valueOf( countthread),purchase));
+            ClientHandler clientHandler=new ClientHandler(socket,String.valueOf( countthread));
+            executorService.submit(clientHandler);
         }
 
         serverSocket.close();

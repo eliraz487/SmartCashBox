@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.exceptions.NotEnoughMoneyException;
 import org.example.exceptions.YouAlreadyPayException;
 import org.example.exceptions.NotEnoughMoneyInCashException;
 
@@ -16,7 +17,7 @@ public class CashRegister {
 
     private static PriorityQueue<Coin> maxHeap;
 
-    private static final int start_count = 3;
+    private static final int start_count = 0;
 
 
     public CashRegister() {
@@ -45,7 +46,7 @@ public class CashRegister {
         addCoinsTo(money_in_cash, coinType, count);
         payment =(coinType.getValue()*count)+payment;
         payment= Math.round(payment*100.0)/100.0;
-        if (purchaseAmount>payment)
+        if (purchaseAmount<=payment)
         {
             haveenoughmoney=true;
             return haveenoughmoney;
@@ -67,7 +68,7 @@ public class CashRegister {
     }
 
 
-    public synchronized Map<Coin, Integer> calculateExcess() throws NotEnoughMoneyInCashException {
+    public synchronized Map<Coin, Integer> calculateExcess() throws NotEnoughMoneyInCashException, NotEnoughMoneyException {
         if (excess != null) {
             return excess;
         }
@@ -77,7 +78,7 @@ public class CashRegister {
         double payment;
         payment = this.payment;
         if (purchaseAmount > payment) {
-           return null;
+           throw new NotEnoughMoneyException(purchaseAmount-payment);
         }
         if (purchaseAmount== payment){
             purchased =true;
